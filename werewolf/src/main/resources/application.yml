@@ -1,17 +1,4 @@
 #配置随机值，RandomValuePropertySource注入随机值
-my:
- secret: 随机数：${random.value}
- number: ${random.int}
- bignumber: ${random.long}
- number.less.than.ten: ${random.int(10)}s
-
-
-app:
- name: iosBackGround
- version: 1.0.1
- profile: prod
-
-
 spring:
  datasource:
   driver-class-name: com.mysql.jdbc.Driver

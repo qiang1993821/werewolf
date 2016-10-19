@@ -1,0 +1,33 @@
+.common .weui_tab{position:static;}
+.common .weui_tab_bd{padding-bottom:0px;}
+.common .weui_panel{margin-top:0px;}
+
+.lists>div:nth-child(2){display:none;}
+
+.activity .weui_cells{margin-top:0px;}
+.activity .weui_cell_ft{color:red;}
+.current:after{
+    display: inline-block;
+    content:'';
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    position: absolute;
+    top:-5px;
+    right:-5px;
+}
+.current{
+    position:relative;
+}
+
+.weui_tabbar{
+    position:fixed;
+    bottom:0;
+    left:0;
+    z-index: 10;
+}
+.lists{
+    padding-bottom: 54px;
+}
+
