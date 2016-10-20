@@ -113,7 +113,7 @@
 			var hunter = $("#hunter").attr("checked")?1:0;
 			var idiot = $("#idiot").attr("checked")?1:0;
 			var cupid = $("#cupid").attr("checked")?1:0;
-			if(name && civilian && werewolf){
+			if(name && civilian && werewolf && name.search(".*-.*")==-1){
 				$.ajax({
 					url: 'game/addGame',
 					type: 'POST',
@@ -152,6 +152,8 @@
 			}else{
 				$(".weui_dialog_title").html("创建失败");
 				$(".weui_dialog_bd").html("请检查前三项是否完善！");
+				if(name.search(".*-.*")==0)
+					$(".weui_dialog_bd").html("房间名禁止包含字符\"-\"");
 				$('#url').attr('href',"javascript:closeDialog(0)");
 				$(".weui_dialog_alert").removeAttr("hidden");
 			}

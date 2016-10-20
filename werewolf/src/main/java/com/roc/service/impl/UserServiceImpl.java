@@ -9,9 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Service;
 
-/**
- * Created by Administrator on 2016/4/20.
- */
 @SpringBootApplication
 @Service
 public class UserServiceImpl implements UserService {

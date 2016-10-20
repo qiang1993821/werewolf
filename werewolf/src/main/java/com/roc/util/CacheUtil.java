@@ -24,7 +24,6 @@ public class CacheUtil {
     static {
         builder = new XMemcachedClientBuilder(AddrUtil.getAddresses("localhost:11211"));
         builder.setFailureMode(true);
-        builder.setConnectionPoolSize(32);
         try {
             memcachedClient = builder.build();
         }catch (IOException e){
