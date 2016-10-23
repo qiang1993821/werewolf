@@ -26,12 +26,11 @@ class GameController {
         def map = [:]
         try {
             gameService.save(game)
-            map.put("msg","房间创建成功！")
-            map.put("type",1)
+            map.put("code",1)
         }catch (Exception e){
             logger.error(e.message)
-            map.put("msg","房间创建失败！")
-            map.put("type",0)
+            map.put("msg","房间创建异常！")
+            map.put("code",0)
         }
         return new JsonBuilder(map).toString()
     }

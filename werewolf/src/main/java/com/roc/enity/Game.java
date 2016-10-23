@@ -11,6 +11,10 @@ public class Game {
     @Id
     @GeneratedValue
     private long id;
+    @Column(nullable = false, name="uid")
+    private long uid;
+    @Column(nullable = true, name="status")
+    private int status;
     @Column(nullable = true, name="name")
     private String name;
     @Column(nullable = true, name="players")
@@ -118,5 +122,13 @@ public class Game {
 
     public void setCupid(int cupid) {
         this.cupid = cupid;
+    }
+
+    public long getUid() {
+        return uid;
+    }
+
+    public void setUid(long uid) {
+        this.uid = uid;
     }
 }

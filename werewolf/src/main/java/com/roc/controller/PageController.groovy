@@ -1,6 +1,7 @@
 package com.roc.controller
 
 import com.roc.enity.User
+import com.roc.service.impl.GameServiceImpl
 import com.roc.service.impl.UserServiceImpl
 import com.roc.util.CacheUtil
 import com.roc.util.TimeUtil
@@ -19,6 +20,8 @@ public class PageController {
     private final Logger logger = LoggerFactory.getLogger(PageController.class);
     @Autowired
     private UserServiceImpl userService
+    @Autowired
+    private GameServiceImpl gameService;
 
     //注册
     @RequestMapping(value = "/reg")
@@ -67,6 +70,15 @@ public class PageController {
     @RequestMapping(value = "/addGame")
     public String addGame(Map<String, Object> model) {
         return "addGame"
+    }
+
+    //我的房间
+    @RequestMapping(value = "/myGame")
+    public String myGame(Map<String, Object> model,
+                         @RequestParam(value = "uid") String uid) {
+        def gameList = gameService.getGameList(uid)
+        model.put("gameList",gameList)
+        return "myGame"
     }
 
 }
