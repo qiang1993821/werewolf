@@ -75,10 +75,22 @@ public class PageController {
     //我的房间
     @RequestMapping(value = "/myGame")
     public String myGame(Map<String, Object> model,
-                         @RequestParam(value = "uid") String uid) {
+                         @RequestParam(value = "uid") long uid) {
         def gameList = gameService.getGameList(uid)
         model.put("gameList",gameList)
         return "myGame"
+    }
+
+    @RequestMapping(value = "/game")
+    public String game(Map<String, Object> model,
+                         @RequestParam(value = "id") long id) {
+        def game = gameService.getGame(id)
+        if (game.status == 0){
+            game.status = 1
+            gameService.save(game)
+        }
+        model.put("game ",game)
+        return "game_owner"
     }
 
 }

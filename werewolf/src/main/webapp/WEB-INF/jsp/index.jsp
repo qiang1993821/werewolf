@@ -21,7 +21,7 @@
         <a href="addGame" class="weui_btn weui_btn_primary">
             新建房间
         </a>
-        <a href="javascript:myAlert()" class="weui_btn weui_btn_default">
+        <a href="javascript:myGame()" class="weui_btn weui_btn_default">
             我的房间
         </a>
         <a href="javascript:logout()" class="weui_btn weui_btn_warn">
@@ -42,9 +42,9 @@
             localStorage.clear();
             location.href = "login";
         }
-        //我的弹窗
-        function myAlert(){
-            location.href = "myAlert?uid="+localStorage.jokeId;
+        //我的房间
+        function myGame(){
+            location.href = "myGame?uid="+localStorage.wwid;
         }
     </script>
     <style type="text/css">

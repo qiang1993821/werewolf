@@ -15,6 +15,8 @@ public class Game {
     private long uid;
     @Column(nullable = true, name="status")
     private int status;
+    @Column(nullable = true, name="result")
+    private String result;
     @Column(nullable = true, name="name")
     private String name;
     @Column(nullable = true, name="players")
@@ -35,6 +37,22 @@ public class Game {
     private int idiot;
     @Column(nullable = true, name="cupid")
     private int cupid;
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
 
     public long getId() {
         return id;

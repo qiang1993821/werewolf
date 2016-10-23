@@ -22,4 +22,11 @@ public interface GameService {
      * @return
      */
     List<JSONObject> getGameList(long uid);
+
+    /**
+     * 根据id获取房间
+     * @param id
+     * @return
+     */
+    Game getGame(long id);
 }

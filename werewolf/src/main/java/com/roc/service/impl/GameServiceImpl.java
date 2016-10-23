@@ -39,9 +39,12 @@ public class GameServiceImpl implements GameService{
             List<Game> gameList = gameDao.getGameList(uid);
             for (Game game:gameList){
                 JSONObject json = new JSONObject();
-                json.put("url","game?id="+game.getId());
+                json.put("id",game.getId());
                 json.put("name",game.getName());
-                json.put("info", GameUtil.getInfo(game));
+                json.put("cNum",game.getCivilian());
+                json.put("wNum",game.getWerewolf());
+                json.put("start",game.getStatus());
+                GameUtil.putGod(game,json);
                 infoList.add(json);
             }
             return infoList;
@@ -49,5 +52,10 @@ public class GameServiceImpl implements GameService{
             logger.error(e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public Game getGame(long id) {
+        return gameDao.findOne(id);
     }
 }

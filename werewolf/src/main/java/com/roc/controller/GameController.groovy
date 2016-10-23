@@ -34,4 +34,22 @@ class GameController {
         }
         return new JsonBuilder(map).toString()
     }
+
+    @RequestMapping(value = "/closeGame")
+    String closeGame(@RequestParam(value = "gameId") long gameId){
+        def map = [:]
+        try {
+            logger.error("======"+gameId)
+            def game = gameService.getGame(gameId)
+            game.status = 0
+            game.result = ""
+            game.players = ""
+            gameService.save(game)
+            map.put("code",1)
+        }catch (Exception e){
+            logger.error(e.message)
+            map.put("code",0)
+        }
+        return new JsonBuilder(map).toString()
+    }
 }
