@@ -14,8 +14,8 @@ import java.util.Properties;
  */
 public class MailUtil {
     private static final Logger logger = LoggerFactory.getLogger(MailUtil.class);
-    public static final String ustbMail = "ustb_volunteer";
-    public static final String ustbPwd = "qiang1993821";
+    public static final String ustbMail = "";
+    public static final String ustbPwd = "";
 
     public static boolean sendMail(final String fromMail,final String password,String toMail,String subject,String msg){
         try {
