@@ -90,7 +90,7 @@ public class PageController {
             gameService.save(game)
         }
         model.put("game ",game)
-        return "game_owner"
+        return "join"
     }
 
 }

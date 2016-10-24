@@ -39,7 +39,6 @@ class GameController {
     String closeGame(@RequestParam(value = "gameId") long gameId){
         def map = [:]
         try {
-            logger.error("======"+gameId)
             def game = gameService.getGame(gameId)
             game.status = 0
             game.result = ""
