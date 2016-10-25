@@ -63,7 +63,7 @@
           <c:choose>
             <c:when test="${game.start == 0}">
               <div class="weui-form-preview__ft">
-                <a class="weui-form-preview__btn weui-form-preview__btn_primary" href="game?id=${game.id}">开始游戏</a>
+                <a class="weui-form-preview__btn weui-form-preview__btn_primary" href="openGame?id=${game.id}">开始游戏</a>
               </div>
             </c:when>
             <c:otherwise>

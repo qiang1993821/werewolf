@@ -81,9 +81,11 @@
 				<input class="weui_switch" type="checkbox" id="cupid">
 			</div>
 		</div>
-		<div class="weui_cells weui_cells_form">
-			<div class="bd spacing">
-				<a href="javascript:addGame()" class="weui_btn weui_btn_primary">确认创建</a>
+		<div id="btn">
+			<div class="weui_cells weui_cells_form">
+				<div class="bd spacing">
+					<a href="javascript:addGame()" class="weui_btn weui_btn_primary">确认创建</a>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -101,6 +103,7 @@
     <script src="static/js/router.min.js"></script>
 	<script type="text/javascript">
 		function addGame(){
+			$("#btn").attr("hidden","hidden");
 			if(!localStorage.wwid){
 				location.href = "/login";
 			}
@@ -113,7 +116,7 @@
 			var hunter = $("#hunter").attr("checked")?1:0;
 			var idiot = $("#idiot").attr("checked")?1:0;
 			var cupid = $("#cupid").attr("checked")?1:0;
-			if(name && civilian && werewolf && name.search(".*-.*")==-1){
+			if(name && civilian && werewolf){
 				$.ajax({
 					url: 'game/addGame',
 					type: 'POST',
@@ -135,6 +138,7 @@
 						$(".weui_dialog_bd").html("服务器被海王类劫持了！");
 						$('#url').attr('href',"javascript:closeDialog(0)");
 						$(".weui_dialog_alert").removeAttr("hidden");
+						$("#btn").removeAttr("hidden");
 					},
 					success: function (data) {
 						if(data.code==1){
@@ -145,6 +149,7 @@
 							$(".weui_dialog_title").html("创建失败");
 							$(".weui_dialog_bd").html(data.msg);
 							$('#url').attr('href',"javascript:closeDialog(0)");
+							$("#btn").removeAttr("hidden");
 						}
 						$(".weui_dialog_alert").removeAttr("hidden");
 					}
@@ -152,10 +157,9 @@
 			}else{
 				$(".weui_dialog_title").html("创建失败");
 				$(".weui_dialog_bd").html("请检查前三项是否完善！");
-				if(name.search(".*-.*")==0)
-					$(".weui_dialog_bd").html("房间名禁止包含字符\"-\"");
 				$('#url').attr('href',"javascript:closeDialog(0)");
 				$(".weui_dialog_alert").removeAttr("hidden");
+				$("#btn").removeAttr("hidden");
 			}
 		}
 		//关闭对话框

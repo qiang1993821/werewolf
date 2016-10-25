@@ -4,6 +4,7 @@ import com.roc.enity.User
 import com.roc.service.impl.GameServiceImpl
 import com.roc.service.impl.UserServiceImpl
 import com.roc.util.CacheUtil
+import com.roc.util.GameUtil
 import com.roc.util.TimeUtil
 import org.apache.commons.lang.StringUtils
 import org.slf4j.Logger
@@ -81,16 +82,49 @@ public class PageController {
         return "myGame"
     }
 
-    @RequestMapping(value = "/game")
-    public String game(Map<String, Object> model,
+    //开始游戏
+    @RequestMapping(value = "/openGame")
+    public String openGame(Map<String, Object> model,
                          @RequestParam(value = "id") long id) {
         def game = gameService.getGame(id)
         if (game.status == 0){
             game.status = 1
+            game.players = GameUtil.putRole(game)
             gameService.save(game)
         }
-        model.put("game ",game)
-        return "join"
+        return "redirect:/game?id="+id
+    }
+
+    @RequestMapping(value = "/game")
+    public String game(Map<String, Object> model,
+                         @RequestParam(value = "id") long id) {
+        def game = gameService.getGame(id)
+        if (game == null){
+            model.put("title","房间不存在")
+            model.put("result","很抱歉，您进入的房间不存在！")
+            return "gameError"
+        }
+        if (game.status == 0){
+            model.put("title","房间已关闭")
+            model.put("result","很抱歉，本局游戏已结束，请等待房主开始游戏后再进入报名！")
+            return "gameError"
+        }
+        model.put("game",game)
+        if (game.status == 1)//处于报名阶段
+            return "join"
+        else //游戏已开始
+            return "result"
+    }
+
+    //开始游戏
+    @RequestMapping(value = "/start")
+    public String showRole(Map<String, Object> model,
+                           @RequestParam(value = "gameId") long gameId) {
+        def game = gameService.getGame(gameId)
+        model.put("name",game.name)
+        model.put("gameId",gameId)
+        model.put("member",GameUtil.getMember(game.players))
+        return "showRole"
     }
 
 }

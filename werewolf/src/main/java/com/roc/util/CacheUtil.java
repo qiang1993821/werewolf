@@ -67,4 +67,14 @@ public class CacheUtil {
         }
         return null;
     }
+
+    public static void del(String key){
+        if (key != null) {
+            try {
+                memcachedClient.deleteWithNoReply(key);
+            } catch (Exception e) {
+                logger.error("Exception", e);
+            }
+        }
+    }
 }

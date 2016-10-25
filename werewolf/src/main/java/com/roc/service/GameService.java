@@ -29,4 +29,10 @@ public interface GameService {
      * @return
      */
     Game getGame(long id);
+
+    /**
+     * 关闭游戏时清空相关缓存
+     * @param players
+     */
+    void clearMember(long id,String players);
 }

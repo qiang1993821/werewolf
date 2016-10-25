@@ -1,9 +1,11 @@
 package com.roc.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.roc.dao.GameDao;
 import com.roc.enity.Game;
 import com.roc.service.GameService;
+import com.roc.util.CacheUtil;
 import com.roc.util.GameUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,5 +59,19 @@ public class GameServiceImpl implements GameService{
     @Override
     public Game getGame(long id) {
         return gameDao.findOne(id);
+    }
+
+    @Override
+    public void clearMember(long gameId,String players) {
+        try {
+            JSONObject json = JSON.parseObject(players);
+            for (String key:json.keySet()){
+                if (CacheUtil.getCache(gameId+"-"+key) != null){
+                    CacheUtil.del(gameId+"-"+key);
+                }
+            }
+        }catch (Exception e){//处理了异常可能无法触发事物
+            logger.error(e.getMessage());
+        }
     }
 }
