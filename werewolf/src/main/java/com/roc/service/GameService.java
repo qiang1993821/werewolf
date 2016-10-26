@@ -32,7 +32,30 @@ public interface GameService {
 
     /**
      * 关闭游戏时清空相关缓存
-     * @param players
+     * @param id
      */
-    void clearMember(long id,String players);
+    void clearMember(long id);
+
+    /**
+     * 判断昵称是否存在
+     * @param gameId
+     * @param name
+     * @return
+     */
+    boolean existName(long gameId,String name);
+
+    /**
+     * 是否已报名满
+     * @param game
+     * @return
+     */
+    boolean isFull(Game game);
+
+    /**
+     * 报名
+     * @param name
+     * @param gameId
+     * @return
+     */
+    long addMember(String name,long gameId);
 }

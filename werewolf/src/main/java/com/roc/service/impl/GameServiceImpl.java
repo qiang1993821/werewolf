@@ -3,7 +3,9 @@ package com.roc.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.roc.dao.GameDao;
+import com.roc.dao.MemberDao;
 import com.roc.enity.Game;
+import com.roc.enity.Player;
 import com.roc.service.GameService;
 import com.roc.util.CacheUtil;
 import com.roc.util.GameUtil;
@@ -22,6 +24,8 @@ public class GameServiceImpl implements GameService{
     private final Logger logger = LoggerFactory.getLogger(GameServiceImpl.class);
     @Autowired
     private GameDao gameDao;
+    @Autowired
+    private MemberDao memberDao;
 
     @Override
     public int save(Game game) {
@@ -43,10 +47,8 @@ public class GameServiceImpl implements GameService{
                 JSONObject json = new JSONObject();
                 json.put("id",game.getId());
                 json.put("name",game.getName());
-                json.put("cNum",game.getCivilian());
-                json.put("wNum",game.getWerewolf());
                 json.put("start",game.getStatus());
-                GameUtil.putGod(game,json);
+                GameUtil.putMember(game.getRole(),json);
                 infoList.add(json);
             }
             return infoList;
@@ -62,13 +64,44 @@ public class GameServiceImpl implements GameService{
     }
 
     @Override
-    public void clearMember(long gameId,String players) {
+    public boolean existName(long gameId, String name) {
         try {
-            JSONObject json = JSON.parseObject(players);
-            for (String key:json.keySet()){
-                if (CacheUtil.getCache(gameId+"-"+key) != null){
-                    CacheUtil.del(gameId+"-"+key);
+            List<Player> playerList = memberDao.getOneOfMember(gameId,name);
+            if (playerList.size() > 0)
+                return true;
+        }catch (Exception e){//处理了异常可能无法触发事物
+            logger.error(e.getMessage());
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isFull(Game game) {
+        try {
+            List<Player> playerList = memberDao.getAllMember(game.getId());
+            if (playerList.size() == game.getNum())
+                return true;
+        }catch (Exception e){//处理了异常可能无法触发事物
+            logger.error(e.getMessage());
+        }
+        return false;
+    }
+
+    @Override
+    public long addMember(String name, long gameId) {
+        return 0;
+    }
+
+    @Override
+    public void clearMember(long gameId) {
+        //从member表获取id清缓存,删除member表里的数据
+        try {
+            List<Player> memList = memberDao.getAllMember(gameId);
+            for (Player player:memList){
+                if (CacheUtil.getCache(gameId+"-"+player.getId()) != null){
+                    CacheUtil.del(gameId+"-"+player.getId());
                 }
+                memberDao.delete(player.getId());
             }
         }catch (Exception e){//处理了异常可能无法触发事物
             logger.error(e.getMessage());

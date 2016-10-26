@@ -13,91 +13,35 @@ import java.util.Random;
 public class GameUtil {
     private static final Logger logger = LoggerFactory.getLogger(GameUtil.class);
 
-    public static void putGod(Game game,JSONObject json){
+    public static void putMember(String role,JSONObject json){
+        String[] roles = role.split("-");
+        int cNum = 0;
+        int wNum = 0;
         String godName = "";
-        int godNum = 0;
-        if (game.getCupid()==1){
-            godName += "丘比特 ";
-            godNum++;
-        }
-        if (game.getGuard()==1){
-            godName += "守卫 ";
-            godNum++;
-        }
-        if (game.getHunter()==1){
-            godName += "猎人 ";
-            godNum++;
-        }
-        if (game.getIdiot()==1){
-            godName += "白痴 ";
-            godNum++;
-        }
-        if (game.getProphet()==1){
-            godName += "预言家 ";
-            godNum++;
-        }
-        if (game.getWitch()==1){
-            godName += "女巫 ";
-            godNum++;
-        }
-        json.put("godNum",godNum);
-        json.put("god",godName);
-    }
-
-    public static String putRole(Game game){
-        JSONObject json = new JSONObject();
-        List<String> role = new ArrayList<String>();
-        if (game.getCupid()==1){
-            role.add("丘比特");
-        }
-        if (game.getGuard()==1){
-            role.add("守卫");
-        }
-        if (game.getHunter()==1){
-            role.add("猎人");
-        }
-        if (game.getIdiot()==1){
-            role.add("白痴");
-        }
-        if (game.getProphet()==1){
-            role.add("预言家");
-        }
-        if (game.getWitch()==1){
-            role.add("女巫");
-        }
-        for (int i=0;i<game.getCivilian();i++){
-            role.add("平民");
-        }
-        for (int i=0;i<game.getWerewolf();i++){
-            role.add("狼人");
-        }
-        json.put("role",role);
-        return json.toJSONString();
-    }
-
-    public static boolean isFull(Game game){
-        JSONObject json = JSON.parseObject(game.getPlayers());
-        int num = game.getCivilian()+game.getWerewolf()+game.getCupid()+game.getGuard()+game.getHunter()+game.getIdiot()+game.getProphet()+game.getWitch();
-        if (json.keySet().size()-1 >= num){
-            return true;
-        }
-        return false;
-    }
-
-    public static String addMember(String name,String players){
-        JSONObject json = JSON.parseObject(players);
-        json.put(name,"报名");
-        return json.toJSONString();
-    }
-
-    public static List<String> getMember(String players){
-        JSONObject json = JSON.parseObject(players);
-        List<String> member = new ArrayList<String>();
-        for (String key:json.keySet()){
-            if (!key.equals("role")){
-                member.add(key);
+        if (roles.length>0){
+            for (int i=0;i<roles.length;i++){
+                if (roles[i].equals("平民")){
+                    cNum++;
+                }else if (roles[i].equals("狼人")){
+                    wNum++;
+                }else if (roles[i].equals("预言家")){
+                    godName += "预言家 ";
+                }else if (roles[i].equals("女巫")){
+                    godName += "女巫 ";
+                }else if (roles[i].equals("猎人")){
+                    godName += "猎人 ";
+                }else if (roles[i].equals("守卫")){
+                    godName += "守卫 ";
+                }else if (roles[i].equals("白痴")){
+                    godName += "白痴 ";
+                }else if (roles[i].equals("丘比特")){
+                    godName += "丘比特 ";
+                }
             }
         }
-        return member;
+        json.put("cNum",cNum);
+        json.put("wNum",wNum);
+        json.put("godNum",roles.length-cNum-wNum);
+        json.put("god",godName);
     }
 }

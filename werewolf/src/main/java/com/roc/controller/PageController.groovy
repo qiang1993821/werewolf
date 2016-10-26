@@ -89,7 +89,6 @@ public class PageController {
         def game = gameService.getGame(id)
         if (game.status == 0){
             game.status = 1
-            game.players = GameUtil.putRole(game)
             gameService.save(game)
         }
         return "redirect:/game?id="+id
@@ -113,7 +112,7 @@ public class PageController {
         if (game.status == 1)//处于报名阶段
             return "join"
         else //游戏已开始
-            return "result"
+            return "night"
     }
 
     //开始游戏

@@ -107,15 +107,44 @@
 			if(!localStorage.wwid){
 				location.href = "/login";
 			}
+			var num = 0;
+			var role = "";
 			var name = $("#name").val();
 			var civilian = $("#civilian").val();
+			num += civilian;
+			for(var i=0;i<civilian;i++){
+				role += "平民-";
+			}
 			var werewolf = $("#werewolf").val();
-			var prophet = $("#prophet").attr("checked")?1:0;
-			var guard = $("#guard").attr("checked")?1:0;
-			var witch = $("#witch").attr("checked")?1:0;
-			var hunter = $("#hunter").attr("checked")?1:0;
-			var idiot = $("#idiot").attr("checked")?1:0;
-			var cupid = $("#cupid").attr("checked")?1:0;
+			num += werewolf;
+			for(var i=0;i<werewolf;i++){
+				role += "狼人-";
+			}
+			if($("#prophet").attr("checked")){
+				role += "预言家-";
+				num++;
+			}
+
+			if($("#guard").attr("checked")){
+				role += "守卫-";
+				num++;
+			}
+			if($("#witch").attr("checked")){
+				role += "女巫-";
+				num++;
+			}
+			if($("#hunter").attr("checked")){
+				role += "猎人-";
+				num++;
+			}
+			if($("#idiot").attr("checked")){
+				role += "白痴-";
+				num++;
+			}
+			if($("#cupid").attr("checked")){
+				role += "丘比特-";
+				num++;
+			}
 			if(name && civilian && werewolf){
 				$.ajax({
 					url: 'game/addGame',
@@ -123,14 +152,9 @@
 					data:{
 						uid:localStorage.wwid,
 						name:name,
-						civilian:civilian,
-						werewolf:werewolf,
-						prophet:prophet,
-						guard:guard,
-						witch:witch,
-						hunter:hunter,
-						idiot:idiot,
-						cupid:cupid
+						num:num,
+						role:role,
+						status:0
 					},
 					dataType: 'json',
 					error: function () {

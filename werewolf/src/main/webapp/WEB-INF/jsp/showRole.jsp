@@ -40,9 +40,7 @@
               </div>
               </c:forEach>
             </div>
-                <div class="weui-form-preview__ft">
-                  <a class="weui-form-preview__btn weui-form-preview__btn_warn" href="javascript:closeGame(${gameId})">取消报名</a>
-                  <a class="weui-form-preview__btn weui-form-preview__btn_primary" href="javascript:closeGame(${gameId})">查看身份</a>
+                <div class="weui-form-preview__ft"><a class="weui-form-preview__btn weui-form-preview__btn_primary" href="javascript:closeGame(${gameId})">查看身份</a>
                 </div>
           </div>
           <br>
@@ -62,7 +60,7 @@
 <script type="text/javascript">
   $(function() {
     var gameId = $("#gameId").val();
-    if(!localStorage.wwjoin || localStorage.wwid=='undefined' || localStorage.wwjoin!=gameId){
+    if(!localStorage.wwjoin || localStorage.wwjoin=='undefined' || localStorage.wwjoin != gameId){
       location.href = "game?id="+gameId;
     }
   });

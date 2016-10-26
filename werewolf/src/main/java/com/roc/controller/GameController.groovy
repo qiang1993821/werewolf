@@ -1,6 +1,7 @@
 package com.roc.controller
 
 import com.roc.enity.Game
+import com.roc.enity.Player
 import com.roc.service.impl.GameServiceImpl
 import com.roc.util.CacheUtil
 import com.roc.util.GameUtil
@@ -41,10 +42,8 @@ class GameController {
         def map = [:]
         try {
             def game = gameService.getGame(gameId)
-            gameService.clearMember(game.id,game.players)
+            gameService.clearMember(game.id)
             game.status = 0
-            game.result = ""
-            game.players = ""
             gameService.save(game)
             map.put("code",1)
         }catch (Exception e){
@@ -57,7 +56,7 @@ class GameController {
     //是否已报名
     @RequestMapping(value = "/hasJoin")
     String hasJoin(@RequestParam(value = "gameId") long gameId,
-                   @RequestParam(value = "name") String name){
+                   @RequestParam(value = "name") long name){
         def map = [:]
         try {
             if (CacheUtil.getCache(gameId+"-"+name) != null) {//不加横杠的话区分不出1-23，和12-3
@@ -88,24 +87,24 @@ class GameController {
                 map.put("msg","昵称为空")
                 return new JsonBuilder(map).toString()
             }
-            if (name.equals("role")){
+            if (game.status != 1){
                 map.put("code", 0)
-                map.put("msg","这个昵称不许用，不服你来咬我！")
+                map.put("msg","房间当前状态不允许报名！")
                 return new JsonBuilder(map).toString()
             }
-            if (CacheUtil.getCache(gameId+"-"+name) != null){
+            if (gameService.existName(gameId,name)){
                 map.put("code", 0)
                 map.put("msg","昵称已经存在，请更换！")
                 return new JsonBuilder(map).toString()
             }
-            if (GameUtil.isFull(game)){
+            if (gameService.isFull(game)){
                 map.put("code", 0)
                 map.put("msg","报名人数已达上限")
                 return new JsonBuilder(map).toString()
             }
-            game.players = GameUtil.addMember(name,game.players)
-            if (gameService.save(game) == 1){
-                CacheUtil.putCache(gameId+"-"+name,1,CacheUtil.MEMCACHED_ONE_DAY)
+            def memberId = gameService.addMember(name,gameId)
+            if (memberId > 0){
+                CacheUtil.putCache(gameId+"-"+memberId,1,CacheUtil.MEMCACHED_ONE_DAY)
                 map.put("code", 1)
             }else {
                 map.put("code", 0)
