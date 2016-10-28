@@ -22,6 +22,7 @@
       <img src="static/images/title.jpg" width='700'>
     </div>
     <input type="hidden" id="gameId" value="${gameId}">
+    <input type="hidden" id="owner" value="${owner}">
   <div class="page home js_show">
     <div class="page">
       <div class="page__bd">
@@ -60,12 +61,55 @@
 <script type="text/javascript">
   $(function() {
     var gameId = $("#gameId").val();
-    if(!localStorage.wwjoin || localStorage.wwjoin=='undefined' || localStorage.wwjoin != gameId){
-      location.href = "game?id="+gameId;
+    var owner = $("#owner").val();
+    if(localStorage.wwjoin && localStorage.wwjoin==gameId && localStorage.wwUid){
+      $.ajax({
+        url: 'game/hasJoin',
+        type: 'POST',
+        data:{
+          gameId:gameId,
+          uid:localStorage.wwUid
+        },
+        dataType: 'json',
+        error: function () {
+          $(".weui_dialog_title").html("网络异常");
+          $(".weui_dialog_bd").html("服务器被海王类劫持了！");
+          $('#url').attr('href',"javascript:closeDialog(1)");
+          $(".weui_dialog_alert").removeAttr("hidden");
+        },
+        success: function (data) {
+          if(data.code==1){
+            if(localStorage.wwid && owner && localStorage.wwid==owner){
+              $(".weui_dialog_title").html("您是房主");
+              $(".weui_dialog_bd").html("转发本页给好友，好友可报名参与本场游戏！");
+              $('#url').attr('href',"javascript:closeDialog(0)");
+              $(".weui_dialog_alert").removeAttr("hidden");
+            }
+          }else{//未报名跳转报名页
+            if(localStorage.wwid && owner && localStorage.wwid==owner){
+              localStorage.clear();
+              localStorage.wwid = owner;
+            }else{
+              localStorage.clear();
+            }
+            location.href = "game?id="+gameId;
+          }
+        }
+      });
+    }else{
+      if(localStorage.wwid && owner && localStorage.wwid==owner){
+        $(".weui_dialog_title").html("您是房主");
+        $(".weui_dialog_bd").html("转发本页给好友，即可报名参与本场游戏！");
+        $('#url').attr('href',"javascript:closeDialog(0)");
+        $(".weui_dialog_alert").removeAttr("hidden");
+      }
     }
   });
-  function closeDialog(){
-    location.href = "index";
+  function closeDialog(code){
+    if(code == 0)
+      $(".weui_dialog_alert").attr("hidden","hidden");
+    else
+      location.href = "game?id="+localStorage.wwjoin;
   }
   function closeGame(gameId){
     $.ajax({

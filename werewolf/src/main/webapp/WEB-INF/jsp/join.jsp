@@ -48,13 +48,13 @@
   $(function() {
     var owner = $("#owner").val();
     var gameId = $("#gameId").val();
-    if(localStorage.wwjoin && localStorage.wwjoin==gameId && localStorage.wwname){
+    if(localStorage.wwjoin && localStorage.wwjoin==gameId && localStorage.wwUid){
       $.ajax({
         url: 'game/hasJoin',
         type: 'POST',
         data:{
           gameId:gameId,
-          name:localStorage.wwname
+          uid:localStorage.wwUid
         },
         dataType: 'json',
         error: function () {
@@ -100,31 +100,7 @@
       $('#url').attr('href',"javascript:closeDialog(0)");
       $(".weui_dialog_alert").removeAttr("hidden");
     }else{
-      $.ajax({
-        url: 'game/hasJoin',
-        type: 'POST',
-        data:{
-          gameId:gameId,
-          name:name
-        },
-        dataType: 'json',
-        error: function () {
-          $(".weui_dialog_title").html("网络异常");
-          $(".weui_dialog_bd").html("服务器被海王类劫持了！");
-          $('#url').attr('href',"javascript:closeDialog(1)");
-          $(".weui_dialog_alert").removeAttr("hidden");
-        },
-        success: function (data) {
-          if(data.code==1){//名字重复
-            $(".weui_dialog_title").html("昵称已存在");
-            $(".weui_dialog_bd").html("请修改昵称！");
-            $('#url').attr('href',"javascript:closeDialog(0)");
-            $(".weui_dialog_alert").removeAttr("hidden");
-          }else{
-            joinGame(gameId,name);
-          }
-        }
-      });
+      joinGame(gameId,name);
     }
   }
   //游戏报名
@@ -146,7 +122,7 @@
       success: function (data) {
         if(data.code==1){//报名成功
           localStorage.wwjoin = gameId;
-          localStorage.wwname = name;
+          localStorage.wwUid = data.uid;
           location.href = "start?gameId="+gameId;
         }else{
           $(".weui_dialog_title").html("报名失败");

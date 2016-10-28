@@ -56,10 +56,10 @@ class GameController {
     //是否已报名
     @RequestMapping(value = "/hasJoin")
     String hasJoin(@RequestParam(value = "gameId") long gameId,
-                   @RequestParam(value = "name") long name){
+                   @RequestParam(value = "uid") long uid){
         def map = [:]
         try {
-            if (CacheUtil.getCache(gameId+"-"+name) != null) {//不加横杠的话区分不出1-23，和12-3
+            if (CacheUtil.getCache(gameId+"-"+uid) != null) {//不加横杠的话区分不出1-23，和12-3
                 map.put("code", 1)
             }else {
                 map.put("code", 0)
@@ -106,6 +106,7 @@ class GameController {
             if (memberId > 0){
                 CacheUtil.putCache(gameId+"-"+memberId,1,CacheUtil.MEMCACHED_ONE_DAY)
                 map.put("code", 1)
+                map.put("uid",memberId)
             }else {
                 map.put("code", 0)
                 map.put("msg","报名失败")

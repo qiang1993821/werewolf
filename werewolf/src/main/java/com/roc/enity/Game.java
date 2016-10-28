@@ -19,7 +19,7 @@ public class Game {
     private String role;
     @Column(nullable = true, name="name")
     private String name;
-    @Column(nullable = true, name="num")
+    @Column(nullable = false, name="num")
     private int num;
 
     public long getId() {

@@ -14,8 +14,8 @@ public class Player {
     private String name;
     @Column(nullable = true, name="status")
     private int status;
-    @Column(nullable = true, name="kill")
-    private int kill;
+    @Column(nullable = true, name="died")
+    private int died;
     @Column(nullable = true, name="night")
     private String night;
 
@@ -51,12 +51,12 @@ public class Player {
         this.status = status;
     }
 
-    public int getKill() {
-        return kill;
+    public int getDied() {
+        return died;
     }
 
-    public void setKill(int kill) {
-        this.kill = kill;
+    public void setDied(int died) {
+        this.died = died;
     }
 
     public String getNight() {

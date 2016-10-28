@@ -120,10 +120,24 @@ public class PageController {
     public String showRole(Map<String, Object> model,
                            @RequestParam(value = "gameId") long gameId) {
         def game = gameService.getGame(gameId)
+        if (game == null){
+            model.put("title","房间不存在")
+            model.put("result","很抱歉，您进入的房间不存在！")
+            return "gameError"
+        }
+        if (game.status == 0){
+            model.put("title","房间已关闭")
+            model.put("result","很抱歉，本局游戏已结束，请等待房主开始游戏后再进入报名！")
+            return "gameError"
+        }
         model.put("name",game.name)
         model.put("gameId",gameId)
-        model.put("member",GameUtil.getMember(game.players))
-        return "showRole"
+        model.put("owner",game.uid)
+        model.put("member",gameService.getMember(gameId))
+        if (game.status == 1)//处于报名阶段
+            return "showRole"
+        else //游戏已开始
+            return "night"
     }
 
 }

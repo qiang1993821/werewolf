@@ -102,6 +102,11 @@
 	<script src="static/js/zepto.min.js"></script>
     <script src="static/js/router.min.js"></script>
 	<script type="text/javascript">
+		$(function() {
+			if(!localStorage.wwid || localStorage.wwid=='undefined'){
+				location.href = "login";
+			}
+		});
 		function addGame(){
 			$("#btn").attr("hidden","hidden");
 			if(!localStorage.wwid){
@@ -111,12 +116,12 @@
 			var role = "";
 			var name = $("#name").val();
 			var civilian = $("#civilian").val();
-			num += civilian;
+			num += parseInt(civilian);
 			for(var i=0;i<civilian;i++){
 				role += "平民-";
 			}
 			var werewolf = $("#werewolf").val();
-			num += werewolf;
+			num += parseInt(werewolf);
 			for(var i=0;i<werewolf;i++){
 				role += "狼人-";
 			}
@@ -189,7 +194,6 @@
 		//关闭对话框
 		function closeDialog(code){
 			if(code==1) {
-				localStorage.needRefresh = 1;
 				location.href = "/index";
 			}else if(code==0){
 				$(".weui_dialog_alert").attr("hidden","hidden");

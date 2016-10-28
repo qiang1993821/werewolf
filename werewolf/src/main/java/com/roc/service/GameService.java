@@ -58,4 +58,11 @@ public interface GameService {
      * @return
      */
     long addMember(String name,long gameId);
+
+    /**
+     * 获取参与者人名
+     * @param id
+     * @return
+     */
+    List<String> getMember(long id);
 }

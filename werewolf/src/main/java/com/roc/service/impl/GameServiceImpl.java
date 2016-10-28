@@ -89,6 +89,18 @@ public class GameServiceImpl implements GameService{
 
     @Override
     public long addMember(String name, long gameId) {
+        try {
+            Player member = new Player();
+            member.setGid(gameId);
+            member.setName(name);
+            member.setStatus(0);
+            member.setDied(0);
+            member.setNight("");
+            memberDao.save(member);
+            return member.getId();
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
         return 0;
     }
 
@@ -106,5 +118,20 @@ public class GameServiceImpl implements GameService{
         }catch (Exception e){//处理了异常可能无法触发事物
             logger.error(e.getMessage());
         }
+    }
+
+    @Override
+    public List<String> getMember(long id) {
+        List<String> memList = null;
+        try {
+            memList = new ArrayList<String>();
+            List<Player> playerList = memberDao.getAllMember(id);
+            for (Player player:playerList){
+                memList.add(player.getName());
+            }
+        }catch (Exception e){//处理了异常可能无法触发事物
+            logger.error(e.getMessage());
+        }
+        return memList;
     }
 }
