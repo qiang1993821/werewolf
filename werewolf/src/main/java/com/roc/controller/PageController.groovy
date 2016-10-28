@@ -134,10 +134,57 @@ public class PageController {
         model.put("gameId",gameId)
         model.put("owner",game.uid)
         model.put("member",gameService.getMember(gameId))
-        if (game.status == 1)//处于报名阶段
+        if (game.status == 1) {//处于报名阶段
             return "showRole"
-        else //游戏已开始
+        }else{//游戏已开始
+            model.put("game",game)
             return "night"
+        }
     }
 
+    //进入黑夜
+    @RequestMapping(value = "/night")
+    public String night(Map<String, Object> model,
+                           @RequestParam(value = "gameId") long gameId,
+                           @RequestParam(value = "uid") long uid) {
+        if (CacheUtil.getCache(gameId+"-"+uid) != null) {//已报名
+            def game = gameService.getGame(gameId)
+            if (game != null){
+                if (game.status == 2){
+                    model.put("game",game)
+                    return "night"
+                }else if (game.status == 1){
+                    if (gameService.isFull(game)){
+                        gameService.putRole(game)
+                        game.status = 2
+                        gameService.save(game)
+                        model.put("game",game)
+                        return "night"
+                    }else {//报名人数不足
+                        model.put("game",game)
+                        return "join"
+                    }
+                }else {
+                    model.put("title","房间已关闭")
+                    model.put("result","很抱歉，本局游戏已结束，请等待房主开始游戏后再进入报名！")
+                    return "gameError"
+                }
+            }else {
+                model.put("title","房间不存在")
+                model.put("result","很抱歉，您进入的房间不存在！")
+                return "gameError"
+            }
+        }else {
+            model.put("title","您为报名")
+            model.put("result","很抱歉，您未报名本场游戏！")
+            return "gameError"
+        }
+    }
+    //临时测试，记得删除
+    @RequestMapping(value = "/temp")
+    public String night(Map<String, Object> model,
+                        @RequestParam(value = "gameId") long gameId) {
+        model.put("game",gameService.getGame(gameId))
+        return "night"
+    }
 }

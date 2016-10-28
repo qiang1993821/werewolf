@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @SpringBootApplication
@@ -133,5 +134,65 @@ public class GameServiceImpl implements GameService{
             logger.error(e.getMessage());
         }
         return memList;
+    }
+
+    @Override
+    public int showRole(long gameId, long uid) {
+        try {
+            Game game = gameDao.findOne(gameId);
+            Player player = memberDao.findOne(uid);
+            if (player.getGid() == game.getId()){
+                if (game.getNum() == memberDao.getAllMember(gameId).size()){
+                    return 1;
+                }else {
+                    return -1;
+                }
+            }
+        }catch (Exception e){//处理了异常可能无法触发事物
+            logger.error(e.getMessage());
+        }
+        return 0;
+    }
+
+    @Override
+    public boolean hasJoin(long gameId, long uid) {
+        try {
+            if(CacheUtil.getCache(gameId+"-"+uid) != null){
+                return true;
+            }else {
+                Game game = gameDao.findOne(gameId);
+                Player member = memberDao.findOne(uid);
+                if (game !=null && member != null && game.getStatus() > 0 && member.getGid() == gameId){
+                    CacheUtil.putCache(gameId+"-"+uid,1,CacheUtil.MEMCACHED_ONE_DAY);
+                    return true;
+                }
+            }
+        }catch (Exception e){//处理了异常可能无法触发事物
+            logger.error(e.getMessage());
+        }
+        return false;
+    }
+
+    @Override
+    public void putRole(Game game) {
+        try {
+            String[] roles = game.getRole().split("-");
+            List<Player> memberList = memberDao.getAllMember(game.getId());
+            if (roles.length == memberList.size() && roles.length == game.getNum()){
+                Collections.shuffle(memberList);//乱序，分配身份
+                for (int i=0;i<roles.length;i++){
+                    Player member = memberList.get(i);
+                    member.setRole(roles[i]);
+                    memberDao.save(member);
+                    if (roles[i].equals("丘比特")){
+                        CacheUtil.putCache("lover-"+game.getId(),"-",CacheUtil.MEMCACHED_ONE_DAY);
+                    }
+                }
+            }else {
+                logger.error("putRole|人数不对应|role:" + roles.length + ",num:" + game.getNum() + ",member:" + memberList.size());
+            }
+        }catch (Exception e){//处理了异常可能无法触发事物
+            logger.error(e.getMessage());
+        }
     }
 }

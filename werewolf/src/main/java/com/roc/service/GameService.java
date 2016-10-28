@@ -65,4 +65,26 @@ public interface GameService {
      * @return
      */
     List<String> getMember(long id);
+
+    /**
+     * 查看角色，1能查看，-1报名不足，0异常
+     * @param gameId
+     * @param uid
+     * @return
+     */
+    int showRole(long gameId,long uid);
+
+    /**
+     * 安排角色
+     * @param game
+     */
+    void putRole(Game game);
+
+    /**
+     * 是否报名
+     * @param gameId
+     * @param uid
+     * @return
+     */
+    boolean hasJoin(long gameId,long uid);
 }

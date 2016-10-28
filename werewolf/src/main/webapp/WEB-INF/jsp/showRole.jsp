@@ -41,7 +41,7 @@
               </div>
               </c:forEach>
             </div>
-                <div class="weui-form-preview__ft"><a class="weui-form-preview__btn weui-form-preview__btn_primary" href="javascript:closeGame(${gameId})">查看身份</a>
+                <div class="weui-form-preview__ft"><a class="weui-form-preview__btn weui-form-preview__btn_primary" href="javascript:showRole(${gameId})">查看身份</a>
                 </div>
           </div>
           <br>
@@ -108,31 +108,40 @@
   function closeDialog(code){
     if(code == 0)
       $(".weui_dialog_alert").attr("hidden","hidden");
-    else
+    else if(code == 1)
       location.href = "game?id="+localStorage.wwjoin;
+    else
+      location.reload();
   }
-  function closeGame(gameId){
+  function showRole(gameId){
     $.ajax({
-      url: 'game/closeGame?gameId='+gameId,
-      type: 'GET',
+      url: 'game/showRole',
+      type: 'POST',
+      data:{
+        gameId:gameId,
+        uid:localStorage.wwUid
+      },
       dataType: 'json',
       error: function () {
-        $(".weui_dialog_title").html("关闭失败");
+        $(".weui_dialog_title").html("查询失败");
         $(".weui_dialog_bd").html("服务器被海王类劫持了！");
-        $('#url').attr('href',"javascript:closeDialog()");
+        $('#url').attr('href',"javascript:closeDialog(0)");
         $(".weui_dialog_alert").removeAttr("hidden");
       },
       success: function (data) {
         if(data.code==1){
-          $(".weui_dialog_title").html("关闭成功");
-          $(".weui_dialog_bd").html("点击\"开始游戏\"进入新的一局吧~");
-          $('#url').attr('href',"javascript:closeDialog()");
-        }else{
-          $(".weui_dialog_title").html("关闭失败");
+          location.href = "night?gameId="+localStorage.wwjoin+"&uid="+localStorage.wwUid;
+        }else if(data.code==-1){
+          $(".weui_dialog_title").html("报名人数不足");
           $(".weui_dialog_bd").html("");
-          $('#url').attr('href',"javascript:closeDialog()");
+          $('#url').attr('href',"javascript:closeDialog(2)");
+          $(".weui_dialog_alert").removeAttr("hidden");
+        }else{
+          $(".weui_dialog_title").html("查询出现异常");
+          $(".weui_dialog_bd").html("");
+          $('#url').attr('href',"javascript:closeDialog(0)");
+          $(".weui_dialog_alert").removeAttr("hidden");
         }
-        $(".weui_dialog_alert").removeAttr("hidden");
       }
     });
   }

@@ -43,6 +43,9 @@ class GameController {
         try {
             def game = gameService.getGame(gameId)
             gameService.clearMember(game.id)
+            if (CacheUtil.getCache("lover-"+gameId) != null){//清除丘比特标识缓存
+                CacheUtil.del("lover-"+gameId)
+            }
             game.status = 0
             gameService.save(game)
             map.put("code",1)
@@ -59,7 +62,7 @@ class GameController {
                    @RequestParam(value = "uid") long uid){
         def map = [:]
         try {
-            if (CacheUtil.getCache(gameId+"-"+uid) != null) {//不加横杠的话区分不出1-23，和12-3
+            if (gameService.hasJoin(gameId,uid)) {//不加横杠的话区分不出1-23，和12-3
                 map.put("code", 1)
             }else {
                 map.put("code", 0)
@@ -116,6 +119,20 @@ class GameController {
             logger.error(e.message)
             map.put("code",0)
             map.put("msg","保存异常")
+        }
+        return new JsonBuilder(map).toString()
+    }
+
+    //查看身份
+    @RequestMapping(value = "/showRole")
+    String showRole(@RequestParam(value = "gameId") long gameId,
+                   @RequestParam(value = "uid") long uid){
+        def map = [:]
+        try {
+            map.put("code",gameService.showRole(gameId,uid))
+        }catch (Exception e){
+            logger.error(e.message)
+            map.put("code",0)
         }
         return new JsonBuilder(map).toString()
     }

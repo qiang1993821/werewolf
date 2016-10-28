@@ -12,6 +12,8 @@ public class Player {
     private long gid;
     @Column(nullable = true, name="name")
     private String name;
+    @Column(nullable = true, name="role")
+    private String role;
     @Column(nullable = true, name="status")
     private int status;
     @Column(nullable = true, name="died")
@@ -65,5 +67,13 @@ public class Player {
 
     public void setNight(String night) {
         this.night = night;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
