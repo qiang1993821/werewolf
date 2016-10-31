@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.roc.enity.Game;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by roc on 2016/10/20.
@@ -87,4 +88,11 @@ public interface GameService {
      * @return
      */
     boolean hasJoin(long gameId,long uid);
+
+    /**
+     * 显示身份对应功能
+     * @param gameId
+     * @param uid
+     */
+    Map<String,Object> showBtn(long gameId,long uid);
 }

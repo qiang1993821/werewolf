@@ -175,7 +175,7 @@ public class PageController {
                 return "gameError"
             }
         }else {
-            model.put("title","您为报名")
+            model.put("title","您未报名")
             model.put("result","很抱歉，您未报名本场游戏！")
             return "gameError"
         }

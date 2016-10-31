@@ -102,6 +102,8 @@
         $(".weui_dialog_bd").html("转发本页给好友，即可报名参与本场游戏！");
         $('#url').attr('href',"javascript:closeDialog(0)");
         $(".weui_dialog_alert").removeAttr("hidden");
+      }else if(localStorage.wwjoin==null || localStorage.wwUid==null){
+        location.href = "game?id="+gameId;
       }
     }
   });

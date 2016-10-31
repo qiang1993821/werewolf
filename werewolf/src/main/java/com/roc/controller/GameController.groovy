@@ -136,4 +136,17 @@ class GameController {
         }
         return new JsonBuilder(map).toString()
     }
+
+    //显示身份功能
+    @RequestMapping(value = "/showBtn")
+    String showBtn(@RequestParam(value = "gameId") long gameId,
+                    @RequestParam(value = "uid") long uid){
+        def map = [:]
+        try {
+            map = gameService.showBtn(gameId,uid)
+        }catch (Exception e){
+            logger.error(e.message)
+        }
+        return new JsonBuilder(map).toString()
+    }
 }

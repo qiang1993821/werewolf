@@ -18,6 +18,8 @@ public class Player {
     private int status;
     @Column(nullable = true, name="died")
     private int died;
+    @Column(nullable = true, name="guarded")
+    private int guarded;
     @Column(nullable = true, name="night")
     private String night;
 
@@ -75,5 +77,13 @@ public class Player {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public int getGuarded() {
+        return guarded;
+    }
+
+    public void setGuarded(int guarded) {
+        this.guarded = guarded;
     }
 }

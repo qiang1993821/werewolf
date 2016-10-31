@@ -15,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @SpringBootApplication
 @Service
@@ -96,6 +94,7 @@ public class GameServiceImpl implements GameService{
             member.setName(name);
             member.setStatus(0);
             member.setDied(0);
+            member.setGuarded(0);
             member.setNight("");
             memberDao.save(member);
             return member.getId();
@@ -194,5 +193,60 @@ public class GameServiceImpl implements GameService{
         }catch (Exception e){//处理了异常可能无法触发事物
             logger.error(e.getMessage());
         }
+    }
+
+    @Override
+    public Map<String,Object> showBtn(long gameId, long uid) {
+        Map<String,Object> map = new HashMap<String, Object>();
+        try {
+            Player player = memberDao.findOne(uid);
+            //是否行使过能力
+            map.put("isShow",player.getStatus());
+            //是否有功能按钮
+            String role = player.getRole();
+            //角色名
+            map.put("roleName",role);
+            map.put("lover",0);
+            if (role.equals("平民") || role.equals("白痴") || role.equals("猎人")){
+                map.put("hasBtn",0);
+                if (CacheUtil.getCache("lover-"+gameId) == null){//有缓存用缓存，没有去查库
+                    List<Player> memberList = memberDao.getAllMember(gameId);
+                    for (Player member:memberList){
+                        if (member.getRole().equals("丘比特")){
+                            map.put("lover",1);
+                            break;
+                        }
+                    }
+                }else {
+                    map.put("lover",1);
+                }
+            }else {
+                map.put("role",role.equals("狼人")?"#werewolf":role.equals("预言家")?"#prophet":role.equals("守卫")?"#guard":role.equals("女巫")?"#witch":"#cupid");
+                map.put("hasBtn",1);
+                List<Player> memberList = memberDao.getAllMember(gameId);
+                List<JSONObject> userList = new ArrayList<JSONObject>();
+                for (Player member:memberList){
+                    if (member.getId() != uid) {
+                        JSONObject json = new JSONObject();
+                        json.put("id", member.getId());
+                        json.put("name",member.getName());
+                        userList.add(json);
+                    }
+                    if (member.getRole().equals("丘比特")){
+                        map.put("lover",1);
+                    }
+                }
+                if (!role.equals("丘比特")){//丘比特不能连自己，其他可以自刀，自毒，自守，自验
+                    JSONObject json = new JSONObject();
+                    json.put("id", player.getId());
+                    json.put("name",player.getName());
+                    userList.add(json);
+                }
+                map.put("member",userList);
+            }
+        }catch (Exception e){//处理了异常可能无法触发事物
+            logger.error("showBtn|"+e.getMessage());
+        }
+        return map;
     }
 }
