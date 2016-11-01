@@ -95,4 +95,28 @@ public interface GameService {
      * @param uid
      */
     Map<String,Object> showBtn(long gameId,long uid);
+
+    /**
+     * 杀人
+     * @param uid
+     * @param kill
+     * @return
+     */
+    int werewolf(long uid,long kill);
+
+    /**
+     * 验人
+     * @param uid
+     * @param guess
+     * @return
+     */
+    Map<String,Object> prophet(long uid,long guess);
+
+    /**
+     * 守人
+     * @param uid
+     * @param protect
+     * @return
+     */
+    int guard(long uid,long protect);
 }

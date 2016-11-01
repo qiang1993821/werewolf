@@ -214,6 +214,7 @@ public class GameServiceImpl implements GameService{
                     for (Player member:memberList){
                         if (member.getRole().equals("丘比特")){
                             map.put("lover",1);
+                            CacheUtil.putCache("lover-"+gameId,"-",CacheUtil.MEMCACHED_ONE_DAY);
                             break;
                         }
                     }
@@ -248,5 +249,65 @@ public class GameServiceImpl implements GameService{
             logger.error("showBtn|"+e.getMessage());
         }
         return map;
+    }
+
+    @Override
+    public int werewolf(long uid, long kill) {
+        try {
+            Player werewolf = memberDao.findOne(uid);
+            Player diedMan = memberDao.findOne(kill);
+            werewolf.setDied(diedMan.getId());
+            werewolf.setNight("狼人" + werewolf.getName() + "杀了" + diedMan.getName());
+            werewolf.setStatus(1);
+            memberDao.save(werewolf);
+            return 1;
+        }catch (Exception e){//处理了异常可能无法触发事物
+            logger.error(e.getMessage());
+        }
+        return 0;
+    }
+
+    @Override
+    public Map<String,Object> prophet(long uid, long guess) {
+        Map<String,Object> map = new HashMap<String, Object>();
+        try {
+            Player prophet = memberDao.findOne(uid);
+            Player guessMan = memberDao.findOne(guess);
+            if (guessMan.getRole().equals("狼人")) {
+                map.put("msg", guessMan.getName() + "是狼人");
+            }else {
+                map.put("msg", guessMan.getName() + "是好人");
+            }
+            prophet.setNight("预言家" + prophet.getName() + "验了" + guessMan.getName() + "," + map.get("msg"));
+            prophet.setStatus(1);
+            memberDao.save(prophet);
+            map.put("code",1);
+            return map;
+        }catch (Exception e){//处理了异常可能无法触发事物
+            logger.error(e.getMessage());
+        }
+        map.put("code",0);
+        return map;
+    }
+
+    @Override
+    public int guard(long uid, long protect) {
+        try {
+            Player guard = memberDao.findOne(uid);
+            Player user = memberDao.findOne(protect);
+            guard.setNight("守卫" + guard.getName() + "守护了" + user.getName());
+            guard.setStatus(1);
+            if (uid == protect){
+                guard.setGuarded(guard.getGuarded()+1);
+            }else {
+                user.setGuarded(user.getGuarded()+1);
+                memberDao.save(user);
+            }
+            memberDao.save(guard);
+            return 1;
+        }catch (Exception e){//处理了异常可能无法触发事物
+            logger.error(e.getMessage());
+        }
+        return 0;
     }
 }

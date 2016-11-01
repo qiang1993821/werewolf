@@ -63,15 +63,13 @@
 </div>
 <div id="witch" hidden="hidden">
   <div id="death">
-    <a href="#" class="weui-btn weui-btn_plain-primary btn" onclick="death()">是否用药</a>
+    <a href="#" class="weui-btn weui-btn_plain-primary btn" onclick="death()">点击用药</a>
   </div>
   <div id="witchBtn" hidden="hidden">
     <div class="weui_cell">
       <div class="weui_cell_hd"><label class="weui_label">昨夜死的人：</label></div>
       <div class="weui_cell_bd weui_cell_primary">
-        <select class="weui_select" id="diedMan">
-            <option value="${diedMan.id}">${diedMan.name}</option>
-        </select>
+        <select class="weui_select" id="diedMan"></select>
       </div>
     </div>
     <div class="weui_cell">
@@ -120,7 +118,7 @@
     <div class="weui_dialog_hd"><strong class="weui_dialog_title">弹窗标题</strong></div>
     <div class="weui_dialog_bd">弹窗内容，告知当前页面信息等</div>
     <div class="weui_dialog_ft">
-      <a href="#" class="weui_btn_dialog primary" id="url">查看</a>
+      <a href="#" class="weui_btn_dialog primary" id="url">确定</a>
       <%--$(".weui_dialog_ft").append('<a href="#" class="weui_btn_dialog default" id="cancel">取消</a>');--%>
     </div>
   </div>
@@ -232,7 +230,113 @@
     else
       location.reload();
   }
+  //开启异常对话框
+  function openDialog(btn){
+    $(".weui_dialog_title").html("网络异常");
+    $(".weui_dialog_bd").html("服务器被海王类劫持了！");
+    $('#url').attr('href',"javascript:closeDialog(0)");
+    $(".weui_dialog_alert").removeAttr("hidden");
+    $(btn).removeAttr("hidden");
+  }
 
+  function werewolf(){
+    $("#werewolf").attr("hidden","hidden");
+    var kill = $("#kill").val();
+    $.ajax({
+      url: 'game/werewolf',
+      type: 'POST',
+      data:{
+        kill:kill,
+        uid:localStorage.wwUid
+      },
+      dataType: 'json',
+      error: function () {
+        openDialog("#werewolf");
+      },
+      success: function (data) {
+        if(data.code == 1){
+          location.reload();
+        }else{
+          openDialog("#werewolf");
+        }
+      }
+    });
+  }
+
+  function prophet(){
+    $("#prophet").attr("hidden","hidden");
+    var guess = $("#guess").val();
+    $.ajax({
+      url: 'game/prophet',
+      type: 'POST',
+      data:{
+        guess:guess,
+        uid:localStorage.wwUid
+      },
+      dataType: 'json',
+      error: function () {
+        openDialog("#prophet");
+      },
+      success: function (data) {
+        if(data.code == 1){
+          $(".weui_dialog_title").html("验人结果");
+          $(".weui_dialog_bd").html(data.msg);
+          $('#url').attr('href',"javascript:closeDialog(1)");
+          $('#url').html("我记住了");
+          $(".weui_dialog_alert").removeAttr("hidden");
+        }else{
+          openDialog("#prophet");
+        }
+      }
+    });
+  }
+
+  function guard(){
+    $("#guard").attr("hidden","hidden");
+    var protect = $("#protect").val();
+    $.ajax({
+      url: 'game/guard',
+      type: 'POST',
+      data:{
+        protect:protect,
+        uid:localStorage.wwUid
+      },
+      dataType: 'json',
+      error: function () {
+        openDialog("#guard");
+      },
+      success: function (data) {
+        if(data.code == 1){
+          location.reload();
+        }else{
+          openDialog("#guard");
+        }
+      }
+    });
+  }
+
+  function death(){
+    $("#death").attr("hidden","hidden");
+    $.ajax({
+      url: 'game/killByWolf',
+      type: 'POST',
+      data:{
+        uid:localStorage.wwUid
+      },
+      dataType: 'json',
+      error: function () {
+        openDialog("#death");
+      },
+      success: function (data) {
+        if(data.code == 1){
+          $("#diedMan").append('<option value='+data.uid+'>'+data.name+'</option>');
+          $("#witch").removeAttr("hidden");
+        }else{
+          openDialog("#death");
+        }
+      }
+    });
+  }
   function cupid(){
 
   }

@@ -17,7 +17,7 @@ public class Player {
     @Column(nullable = true, name="status")
     private int status;
     @Column(nullable = true, name="died")
-    private int died;
+    private long died;
     @Column(nullable = true, name="guarded")
     private int guarded;
     @Column(nullable = true, name="night")
@@ -55,11 +55,11 @@ public class Player {
         this.status = status;
     }
 
-    public int getDied() {
+    public long getDied() {
         return died;
     }
 
-    public void setDied(int died) {
+    public void setDied(long died) {
         this.died = died;
     }
 

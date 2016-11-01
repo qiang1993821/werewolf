@@ -149,4 +149,43 @@ class GameController {
         }
         return new JsonBuilder(map).toString()
     }
+
+    //狼人杀人
+    @RequestMapping(value = "/werewolf")
+    String werewolf(@RequestParam(value = "kill") long kill,
+                   @RequestParam(value = "uid") long uid){
+        def map = [:]
+        try {
+            map.put("code",gameService.werewolf(uid,kill))
+        }catch (Exception e){
+            logger.error(e.message)
+        }
+        return new JsonBuilder(map).toString()
+    }
+
+    //预言家验人
+    @RequestMapping(value = "/prophet")
+    String prophet(@RequestParam(value = "guess") long guess,
+                    @RequestParam(value = "uid") long uid){
+        def map = [:]
+        try {
+            map = gameService.prophet(uid,guess)
+        }catch (Exception e){
+            logger.error(e.message)
+        }
+        return new JsonBuilder(map).toString()
+    }
+
+    //守卫守人
+    @RequestMapping(value = "/guard")
+    String guard(@RequestParam(value = "protect") long protect,
+                   @RequestParam(value = "uid") long uid){
+        def map = [:]
+        try {
+            map.put("code",gameService.guard(uid,protect))
+        }catch (Exception e){
+            logger.error(e.message)
+        }
+        return new JsonBuilder(map).toString()
+    }
 }
