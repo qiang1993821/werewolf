@@ -9,6 +9,7 @@ import com.roc.enity.Player;
 import com.roc.service.GameService;
 import com.roc.util.CacheUtil;
 import com.roc.util.GameUtil;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -408,6 +409,7 @@ public class GameServiceImpl implements GameService{
     @Override
     public Map<String, Object> isLover(long uid) {
         Map<String,Object> map = new HashMap<String, Object>();
+        map.put("code",1);
         try {
             Player user = memberDao.findOne(uid);
             String lovers = String.valueOf(CacheUtil.getCache("lover-" + user.getGid()));
@@ -416,19 +418,98 @@ public class GameServiceImpl implements GameService{
                 if (String.valueOf(uid).equals(couple[0]) || String.valueOf(uid).equals(couple[1])){
                     map.put("title","你被连为情侣");
                     map.put("msg","你的情侣是："+(String.valueOf(uid).equals(couple[0])?couple[0]:couple[1]));
-                }else {
-                    map.put("title","你不是情侣");
-                    map.put("msg","");
+                    return map;
                 }
-                map.put("code",1);
-            }else {
-                map.put("code",0);
             }
-            return map;
         }catch (Exception e){//处理了异常可能无法触发事物
             logger.error(e.getMessage());
         }
-        map.put("code",0);
+        map.put("title","你不是情侣");
+        map.put("msg","");
         return map;
+    }
+
+    @Override
+    public Map<String, Object> showResult(long gameId) {
+        Map<String,Object> map = new HashMap<String, Object>();
+        try {
+            //被狼刀的人
+            List<Long> diedList = memberDao.killByWolf(gameId);
+            Map<Long,Integer> num = new HashMap<Long, Integer>();
+            for (long id:diedList){
+                if (num.get(id) == null){
+                    num.put(id,1);
+                }else {
+                    num.put(id,num.get(id)+1);
+                }
+            }
+            int repeat = 0;
+            long maxId = 0;
+            int max = 0;
+            for (long id:num.keySet()){
+                if (num.get(id) > max && id != 0){
+                    repeat = 0;
+                    maxId = id;
+                    max = num.get(id);
+                }else if (num.get(id) == max && id != 0){
+                    repeat = 1;
+                }
+            }
+            Player killByWolf = memberDao.findOne(maxId);
+            if (repeat == 0 && maxId > 0){//有人被狼杀死
+                if (killByWolf.getGuarded() > 1) {//被刀的人又被女巫和守卫弄死（双救或毒）
+                    map.put("title", "昨夜死的人是:");
+                    map.put("msg", killByWolf.getName());
+                }else {
+                    List<Player> killByWith = memberDao.killByWitch(gameId);
+                    if (killByWith != null && killByWith.size() > 0){//毒
+                        map.put("title", "昨夜双死:");
+                        map.put("msg", killByWolf.getName()+"和"+killByWith.get(0).getName()+"死亡");
+                    }else if (killByWolf.getGuarded() == 1){//救|守
+                        map.put("title", "昨夜平安夜");
+                        map.put("msg", "没有人死亡");
+                    }else {
+                        map.put("title", "昨夜死的人是:");
+                        map.put("msg", killByWolf.getName());
+                    }
+                }
+            }else {//狼没杀人
+                List<Player> killByWith = memberDao.killByWitch(gameId);
+                if (killByWith != null && killByWith.size() > 0){//毒
+                    map.put("title", "昨夜死的人是:");
+                    map.put("msg", killByWith.get(0).getName());
+                }else {
+                    map.put("title", "昨夜平安夜");
+                    map.put("msg", "没有人死亡");
+                }
+            }
+            map.put("code",1);
+        }catch (Exception e){//处理了异常可能无法触发事物
+            logger.error(e.getMessage());
+            map.put("code",0);
+        }
+        return map;
+    }
+
+    @Override
+    public List<String> getNightInfo(long gameId) {
+        List<Player> member = memberDao.getAllMember(gameId);
+        List<String> nightInfo = new ArrayList<String>();
+        List<String> wolfInfo = new ArrayList<String>();
+        List<String> godInfo = new ArrayList<String>();
+        for (Player user : member){
+            if (user.getRole().equals("猎人") || user.getRole().equals("白痴")){
+                nightInfo.add(user.getName()+"是"+user.getRole());
+            }else if (StringUtils.isNotBlank(user.getNight())){
+                if (user.getRole().equals("狼人")){
+                    wolfInfo.add(user.getNight());
+                }else {
+                    godInfo.add(user.getNight());
+                }
+            }
+        }
+        nightInfo.addAll(wolfInfo);
+        nightInfo.addAll(godInfo);
+        return nightInfo;
     }
 }

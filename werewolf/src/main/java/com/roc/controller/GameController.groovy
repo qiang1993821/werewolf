@@ -247,4 +247,17 @@ class GameController {
         }
         return new JsonBuilder(map).toString()
     }
+
+    //房主查看昨夜结果
+    @RequestMapping(value = "/showResult")
+    String showResult(@RequestParam(value = "gameId") long gameId){
+        def map = [:]
+        try {
+            map = gameService.showResult(gameId)
+        }catch (Exception e){
+            logger.error(e.message)
+            map.put("code",0)
+        }
+        return new JsonBuilder(map).toString()
+    }
 }

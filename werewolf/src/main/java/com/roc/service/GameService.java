@@ -146,5 +146,24 @@ public interface GameService {
      */
     Map<String,Object> killByWolf(long gameId);
 
+    /**
+     * 查看情侣
+     * @param uid
+     * @return
+     */
     Map<String,Object> isLover(long uid);
+
+    /**
+     * 昨夜死的人
+     * @param gameId
+     * @return
+     */
+    Map<String,Object> showResult(long gameId);
+
+    /**
+     * 获取昨夜详情
+     * @param gameId
+     * @return
+     */
+    List<String> getNightInfo(long gameId);
 }

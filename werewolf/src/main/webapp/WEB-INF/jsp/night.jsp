@@ -116,10 +116,11 @@
   <div class="weui_mask"></div>
   <div class="weui_dialog">
     <div class="weui_dialog_hd"><strong class="weui_dialog_title">弹窗标题</strong></div>
-    <div class="weui_dialog_bd">弹窗内容，告知当前页面信息等</div>
+    <div id="alertList">
+      <div class="weui_dialog_bd">弹窗内容，告知当前页面信息等</div>
+    </div>
     <div class="weui_dialog_ft">
       <a href="#" class="weui_btn_dialog primary" id="url">确定</a>
-      <%--$(".weui_dialog_ft").append('<a href="#" class="weui_btn_dialog default" id="cancel">取消</a>');--%>
     </div>
   </div>
 </div>
@@ -438,6 +439,43 @@
           $("#lover").removeAttr("hidden");
         }else{
           openDialog("#lover");
+        }
+      }
+    });
+  }
+
+  function killed(){
+    $("#killed").attr("hidden","hidden");
+    $(".weui_dialog_title").html("查看昨夜结果");
+    $(".weui_dialog_bd").html("查看前应先竞选警长");
+    $('#url').attr('href',"javascript:showResult()");
+    $('#url').html("我知道了");
+    $(".weui_dialog_alert").removeAttr("hidden");
+  }
+
+  function showResult(){
+    $(".weui_dialog_alert").attr("hidden","hidden");
+    $.ajax({
+      url: 'game/showResult',
+      type: 'POST',
+      data:{
+        gameId:gameId
+      },
+      dataType: 'json',
+      error: function () {
+        openDialog("#killed");
+      },
+      success: function (data) {
+        if(data.code == 1){
+          $(".weui_dialog_title").html(data.title);
+          $(".weui_dialog_bd").html(data.msg);
+          $('#url').attr('href',"nightDetails?gameId="+gameId);
+          $('#url').html("查看");
+          $(".weui_dialog_ft").append('<a href="javascript:closeDialog(1)" class="weui_btn_dialog default" id="cancel">取消</a>');
+          $(".weui_dialog_alert").removeAttr("hidden");
+          $("#killed").removeAttr("hidden");
+        }else{
+          openDialog("#killed");
         }
       }
     });

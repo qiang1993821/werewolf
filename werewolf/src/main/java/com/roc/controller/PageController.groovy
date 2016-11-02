@@ -180,11 +180,13 @@ public class PageController {
             return "gameError"
         }
     }
-    //临时测试，记得删除
-    @RequestMapping(value = "/temp")
-    public String night(Map<String, Object> model,
+
+    //昨夜详情
+    @RequestMapping(value = "/nightDetails")
+    public String nightDetails(Map<String, Object> model,
                         @RequestParam(value = "gameId") long gameId) {
-        model.put("game",gameService.getGame(gameId))
-        return "night"
+        model.put("nightInfo",gameService.getNightInfo(gameId))
+        model.put("gameId",gameId)
+        return "night_details"
     }
 }

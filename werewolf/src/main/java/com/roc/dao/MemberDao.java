@@ -19,4 +19,7 @@ public interface MemberDao extends CrudRepository<Player, Long> {
 
     @Query("SELECT player.died FROM Player player WHERE player.gid = :gid AND player.role = '狼人'")
     List<Long> killByWolf(@Param("gid") long gid);
+
+    @Query("SELECT player FROM Player player WHERE player.gid = :gid AND player.guarded > 1")
+    List<Player> killByWitch(@Param("gid") long gid);
 }
