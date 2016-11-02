@@ -226,6 +226,12 @@ public class GameServiceImpl implements GameService{
                 map.put("hasBtn",1);
                 List<Player> memberList = memberDao.getAllMember(gameId);
                 List<JSONObject> userList = new ArrayList<JSONObject>();
+                if (role.equals("女巫")){
+                    JSONObject json = new JSONObject();
+                    json.put("id", 0);
+                    json.put("name","不毒人");
+                    userList.add(json);
+                }
                 for (Player member:memberList){
                     if (member.getId() != uid) {
                         JSONObject json = new JSONObject();
@@ -309,5 +315,120 @@ public class GameServiceImpl implements GameService{
             logger.error(e.getMessage());
         }
         return 0;
+    }
+
+    @Override
+    public Map<String, Object> killByWolf(long gameId) {
+        Map<String,Object> map = new HashMap<String, Object>();
+        try {
+            List<Long> diedList = memberDao.killByWolf(gameId);
+            Map<Long,Integer> num = new HashMap<Long, Integer>();
+            for (long id:diedList){
+                if (num.get(id) == null){
+                    num.put(id,1);
+                }else {
+                    num.put(id,num.get(id)+1);
+                }
+            }
+            int repeat = 0;
+            long maxId = 0;
+            int max = 0;
+            for (long id:num.keySet()){
+                if (num.get(id) > max && id != 0){
+                    repeat = 0;
+                    maxId = id;
+                    max = num.get(id);
+                }else if (num.get(id) == max && id != 0){
+                    repeat = 1;
+                }
+            }
+            if (repeat == 1 || maxId == 0){
+                map.put("uid",0);
+                map.put("name","无人死亡");
+            }else {
+                map.put("uid",maxId);
+                map.put("name",memberDao.findOne(maxId).getName());
+            }
+            map.put("code",1);
+            return map;
+        }catch (Exception e){//处理了异常可能无法触发事物
+            logger.error(e.getMessage());
+        }
+        map.put("code",0);
+        return map;
+    }
+
+    @Override
+    public int witch(long uid, long witch, int save) {
+        try {
+            Player user = memberDao.findOne(witch);
+            if (uid > 0){
+                Player player = memberDao.findOne(uid);
+                if (save == 1){//解药+1毒药+2
+                    player.setGuarded(player.getGuarded()+1);
+                    user.setNight("女巫"+user.getName()+"救了"+player.getName());
+                }else {
+                    player.setGuarded(player.getGuarded()+2);
+                    user.setNight("女巫"+user.getName()+"毒了"+player.getName());
+                }
+                memberDao.save(player);
+            }else {
+                user.setNight("女巫"+user.getName()+"没有用药");
+            }
+            user.setStatus(1);
+            memberDao.save(user);
+            return 1;
+        }catch (Exception e){//处理了异常可能无法触发事物
+            logger.error(e.getMessage());
+        }
+        return 0;
+    }
+
+    @Override
+    public int cupid(long uid, long lover1, long lover2, int code) {
+        try {
+            Player user = memberDao.findOne(uid);
+            Player loverOne = memberDao.findOne(lover1);
+            Player loverTwo = memberDao.findOne(lover2);
+            if (code == 1 && user.getGid() == loverOne.getGid() && user.getGid() == loverTwo.getGid()){
+                CacheUtil.putCache("lover-"+user.getGid(),lover1+"-"+lover2,CacheUtil.MEMCACHED_ONE_DAY);
+                user.setNight("丘比特"+user.getName()+"连了情侣"+loverOne.getName()+"和"+loverTwo.getName());
+            }else {
+                user.setNight("丘比特"+user.getName()+"没有连情侣");
+            }
+            user.setStatus(1);
+            memberDao.save(user);
+            return 1;
+        }catch (Exception e){//处理了异常可能无法触发事物
+            logger.error(e.getMessage());
+        }
+        return 0;
+    }
+
+    @Override
+    public Map<String, Object> isLover(long uid) {
+        Map<String,Object> map = new HashMap<String, Object>();
+        try {
+            Player user = memberDao.findOne(uid);
+            String lovers = String.valueOf(CacheUtil.getCache("lover-" + user.getGid()));
+            if (lovers != null && String.valueOf(lovers).split("-").length == 2){
+                String[] couple = String.valueOf(lovers).split("-");
+                if (String.valueOf(uid).equals(couple[0]) || String.valueOf(uid).equals(couple[1])){
+                    map.put("title","你被连为情侣");
+                    map.put("msg","你的情侣是："+(String.valueOf(uid).equals(couple[0])?couple[0]:couple[1]));
+                }else {
+                    map.put("title","你不是情侣");
+                    map.put("msg","");
+                }
+                map.put("code",1);
+            }else {
+                map.put("code",0);
+            }
+            return map;
+        }catch (Exception e){//处理了异常可能无法触发事物
+            logger.error(e.getMessage());
+        }
+        map.put("code",0);
+        return map;
     }
 }

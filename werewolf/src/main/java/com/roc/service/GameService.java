@@ -119,4 +119,32 @@ public interface GameService {
      * @return
      */
     int guard(long uid,long protect);
+
+    /**
+     * 女巫
+     * @param uid save为1是被救人id，save为0是被毒人id（选不毒人id为0）
+     * @param witch
+     * @param save 0没救人，1救人
+     * @return
+     */
+    int witch(long uid,long witch,int save);
+
+    /**
+     * 丘比特
+     * @param uid
+     * @param lover1
+     * @param lover2
+     * @param code
+     * @return
+     */
+    int cupid(long uid,long lover1,long lover2,int code);
+
+    /**
+     * 被狼刀的人，平安夜uid放0
+     * @param gameId
+     * @return
+     */
+    Map<String,Object> killByWolf(long gameId);
+
+    Map<String,Object> isLover(long uid);
 }

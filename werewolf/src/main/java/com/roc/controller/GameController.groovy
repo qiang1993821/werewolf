@@ -1,10 +1,8 @@
 package com.roc.controller
 
 import com.roc.enity.Game
-import com.roc.enity.Player
 import com.roc.service.impl.GameServiceImpl
 import com.roc.util.CacheUtil
-import com.roc.util.GameUtil
 import groovy.json.JsonBuilder
 import org.apache.commons.lang.StringUtils
 import org.slf4j.Logger
@@ -146,6 +144,7 @@ class GameController {
             map = gameService.showBtn(gameId,uid)
         }catch (Exception e){
             logger.error(e.message)
+            map.put("code",0)
         }
         return new JsonBuilder(map).toString()
     }
@@ -159,6 +158,7 @@ class GameController {
             map.put("code",gameService.werewolf(uid,kill))
         }catch (Exception e){
             logger.error(e.message)
+            map.put("code",0)
         }
         return new JsonBuilder(map).toString()
     }
@@ -172,6 +172,7 @@ class GameController {
             map = gameService.prophet(uid,guess)
         }catch (Exception e){
             logger.error(e.message)
+            map.put("code",0)
         }
         return new JsonBuilder(map).toString()
     }
@@ -185,6 +186,64 @@ class GameController {
             map.put("code",gameService.guard(uid,protect))
         }catch (Exception e){
             logger.error(e.message)
+            map.put("code",0)
+        }
+        return new JsonBuilder(map).toString()
+    }
+
+    //查狼人杀了谁
+    @RequestMapping(value = "/killByWolf")
+    String killByWolf(@RequestParam(value = "gameId") long gameId){
+        def map = [:]
+        try {
+            map = gameService.killByWolf(gameId)
+        }catch (Exception e){
+            logger.error(e.message)
+            map.put("code",0)
+        }
+        return new JsonBuilder(map).toString()
+    }
+
+    //女巫
+    @RequestMapping(value = "/witch")
+    String witch(@RequestParam(value = "witch") long witch,
+                 @RequestParam(value = "save") int save,
+                 @RequestParam(value = "uid") long uid){
+        def map = [:]
+        try {
+            map.put("code",gameService.witch(uid,witch,save))
+        }catch (Exception e){
+            logger.error(e.message)
+            map.put("code",0)
+        }
+        return new JsonBuilder(map).toString()
+    }
+
+    //丘比特
+    @RequestMapping(value = "/cupid")
+    String cupid(@RequestParam(value = "lover1") long lover1,
+                 @RequestParam(value = "lover2") long lover2,
+                 @RequestParam(value = "code") int code,
+                 @RequestParam(value = "uid") long uid){
+        def map = [:]
+        try {
+            map.put("code",gameService.cupid(uid,lover1,lover2,code))
+        }catch (Exception e){
+            logger.error(e.message)
+            map.put("code",0)
+        }
+        return new JsonBuilder(map).toString()
+    }
+
+    //查看情侣
+    @RequestMapping(value = "/lover")
+    String lover(@RequestParam(value = "uid") long uid){
+        def map = [:]
+        try {
+            map = gameService.isLover(uid)
+        }catch (Exception e){
+            logger.error(e.message)
+            map.put("code",0)
         }
         return new JsonBuilder(map).toString()
     }

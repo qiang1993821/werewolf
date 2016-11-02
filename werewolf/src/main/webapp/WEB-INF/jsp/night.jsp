@@ -321,7 +321,7 @@
       url: 'game/killByWolf',
       type: 'POST',
       data:{
-        uid:localStorage.wwUid
+        gameId:gameId
       },
       dataType: 'json',
       error: function () {
@@ -330,15 +330,117 @@
       success: function (data) {
         if(data.code == 1){
           $("#diedMan").append('<option value='+data.uid+'>'+data.name+'</option>');
-          $("#witch").removeAttr("hidden");
+          $("#witchBtn").removeAttr("hidden");
         }else{
           openDialog("#death");
         }
       }
     });
   }
-  function cupid(){
 
+  function witch(){
+    $("#witch").attr("hidden","hidden");
+    var diedMan = $("#diedMan").val();
+    var save = $("#save").val();
+    var poison = $("#poison").val();
+    if((diedMan == null || diedMan == 0) && save == 1){
+      $(".weui_dialog_title").html("平安夜不需要救人");
+      $(".weui_dialog_bd").html("");
+      $('#url').attr('href',"javascript:closeDialog(1)");
+      $(".weui_dialog_alert").removeAttr("hidden");
+    }else if(save == 1 && poison > 0){
+      $(".weui_dialog_title").html("不能同时用药");
+      $(".weui_dialog_bd").html("请选择救人或者毒人，不能同时选择！");
+      $('#url').attr('href',"javascript:closeDialog(1)");
+      $(".weui_dialog_alert").removeAttr("hidden");
+    }else if(save == 1 && diedMan == localStorage.wwUid){
+      $(".weui_dialog_title").html("女巫不能自救");
+      $(".weui_dialog_bd").html("");
+      $('#url').attr('href',"javascript:closeDialog(1)");
+      $(".weui_dialog_alert").removeAttr("hidden");
+    }else{
+      var uid = save==1?diedMan:poison;
+      $.ajax({
+        url: 'game/witch',
+        type: 'POST',
+        data:{
+          uid:uid,
+          save:save,
+          witch:localStorage.wwUid
+        },
+        dataType: 'json',
+        error: function () {
+          openDialog("#witch");
+        },
+        success: function (data) {
+          if(data.code == 1){
+            location.reload();
+          }else{
+            openDialog("#witch");
+          }
+        }
+      });
+    }
+  }
+
+  function cupid(code){
+    $("#cupid").attr("hidden","hidden");
+    var lover1 = $("#lover1").val();
+    var lover2 = $("#lover2").val();
+    if(code == 1 && lover1 == lover2){
+      $(".weui_dialog_title").html("不能连同一人");
+      $(".weui_dialog_bd").html("");
+      $('#url').attr('href',"javascript:closeDialog(1)");
+      $(".weui_dialog_alert").removeAttr("hidden");
+    }else{
+      $.ajax({
+        url: 'game/cupid',
+        type: 'POST',
+        data:{
+          uid:localStorage.wwUid,
+          code:code,
+          lover1:lover1,
+          lover2:lover2
+        },
+        dataType: 'json',
+        error: function () {
+          openDialog("#cupid");
+        },
+        success: function (data) {
+          if(data.code == 1){
+            location.reload();
+          }else{
+            openDialog("#cupid");
+          }
+        }
+      });
+    }
+  }
+
+  function lover(){
+    $("#lover").attr("hidden","hidden");
+    $.ajax({
+      url: 'game/lover',
+      type: 'POST',
+      data:{
+        uid:localStorage.wwUid
+      },
+      dataType: 'json',
+      error: function () {
+        openDialog("#lover");
+      },
+      success: function (data) {
+        if(data.code == 1){
+          $(".weui_dialog_title").html(data.title);
+          $(".weui_dialog_bd").html(data.msg);
+          $('#url').attr('href',"javascript:closeDialog(0)");
+          $(".weui_dialog_alert").removeAttr("hidden");
+          $("#lover").removeAttr("hidden");
+        }else{
+          openDialog("#lover");
+        }
+      }
+    });
   }
 </script>
 </body>
