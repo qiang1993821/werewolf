@@ -50,7 +50,7 @@ class UserController {
                 if (times<5) {
                     CacheUtil.putCache("w" + username, pwd, CacheUtil.MEMCACHED_ONE_DAY * 3)
                     CacheUtil.putCache("wrandom-" + username, random, CacheUtil.MEMCACHED_ONE_DAY * 3)
-                    def msg = "少年，开启你的伟大航路吧，<a href=\"http://localhost:821/reg?mail=" + username + "&random=" + random + "\">点击完成注册</a>，若非本人操作请忽略！（此邮件三日内有效）"
+                    def msg = "少年，开启你的伟大航路吧，<a href=\"http://www.volunteer.com:821/reg?mail=" + username + "&random=" + random + "\">点击完成注册</a>，若非本人操作请忽略！（此邮件三日内有效）"
                     def title = "狼人杀首夜辅助注册激活"
                     if (MailUtil.sendMail(MailUtil.ustbMail, MailUtil.ustbPwd, username, title, msg)) {
                         result = "此邮箱尚未注册，已发送注册邮件，请尽快登录完成注册！"

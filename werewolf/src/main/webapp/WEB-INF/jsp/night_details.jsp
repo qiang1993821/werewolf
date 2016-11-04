@@ -19,11 +19,9 @@
 <body class="login">
 <div style="height: 10%;">
 </div>
-<div style="height: 50%;">
 <c:forEach items="${nightInfo}" var="info">
   <span class="name"><font color="#32cd32" size="6" id="role">${info}</font></span>
 </c:forEach>
-</div>
 <a href="game?id=${gameId}" class="weui-btn weui-btn_plain-primary btn">返回</a>
 </body>
 </html>

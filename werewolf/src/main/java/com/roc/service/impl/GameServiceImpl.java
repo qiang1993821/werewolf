@@ -416,8 +416,9 @@ public class GameServiceImpl implements GameService{
             if (lovers != null && String.valueOf(lovers).split("-").length == 2){
                 String[] couple = String.valueOf(lovers).split("-");
                 if (String.valueOf(uid).equals(couple[0]) || String.valueOf(uid).equals(couple[1])){
+                    Player myLover = memberDao.findOne(Long.valueOf(String.valueOf(uid).equals(couple[0])?couple[1]:couple[0]));
                     map.put("title","你被连为情侣");
-                    map.put("msg","你的情侣是："+(String.valueOf(uid).equals(couple[0])?couple[0]:couple[1]));
+                    map.put("msg","你的情侣是："+ myLover.getName());
                     return map;
                 }
             }
@@ -486,7 +487,7 @@ public class GameServiceImpl implements GameService{
             map.put("code",1);
         }catch (Exception e){//处理了异常可能无法触发事物
             logger.error(e.getMessage());
-            map.put("code",0);
+            map.put("code", 0);
         }
         return map;
     }

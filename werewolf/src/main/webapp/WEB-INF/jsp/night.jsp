@@ -280,9 +280,9 @@
       },
       success: function (data) {
         if(data.code == 1){
-          $(".weui_dialog_title").html("验人结果");
+          $(".weui_dialog_title").html("验人结果(1/3)");
           $(".weui_dialog_bd").html(data.msg);
-          $('#url').attr('href',"javascript:closeDialog(1)");
+          $('#url').attr('href',"javascript:prophetTimes(\""+data.msg+"\",1)");
           $('#url').html("我记住了");
           $(".weui_dialog_alert").removeAttr("hidden");
         }else{
@@ -290,6 +290,23 @@
         }
       }
     });
+  }
+
+  function prophetTimes(result,resultTimes){
+    $(".weui_dialog_alert").attr("hidden","hidden");
+    if(resultTimes == 1){
+      $(".weui_dialog_title").html("验人结果(2/3)");
+      $(".weui_dialog_bd").html(result);
+      $('#url').attr('href',"javascript:prophetTimes(\""+result+"\",2)");
+      $('#url').html("我记住了");
+      $(".weui_dialog_alert").removeAttr("hidden");
+    }else if(resultTimes == 2){
+      $(".weui_dialog_title").html("验人结果(3/3)");
+      $(".weui_dialog_bd").html(result);
+      $('#url').attr('href',"javascript:prophetTimes(\""+result+"\",3)");
+      $('#url').html("我记住了");
+      $(".weui_dialog_alert").removeAttr("hidden");
+    }
   }
 
   function guard(){
